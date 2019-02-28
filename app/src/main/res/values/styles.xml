@@ -10,7 +10,7 @@
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar" >false</item>
-        <item name="windowNoTitle" >false</item>
+        <item name="windowNoTitle" >true</item>
     </style>
 
 
