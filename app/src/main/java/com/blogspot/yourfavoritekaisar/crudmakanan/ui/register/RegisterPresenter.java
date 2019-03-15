@@ -30,6 +30,7 @@ public class RegisterPresenter implements RegisterInterface.Presenter {
                     !loginData.getUsername().isEmpty() &&
                     !loginData.getNama_user().isEmpty()
                     ) {
+
                 view.showProgress();
                 Call<LoginResponse> call = apiInterface.register(
                         loginData.getUsername(),
@@ -46,7 +47,7 @@ public class RegisterPresenter implements RegisterInterface.Presenter {
                         view.hideProgress();
                         if (response.body()!=null){
                             if (response.body().getResult() == 1){
-                                view.showRIgesterSuccsess(response.body().getMessage());
+                                view.showRegisterSucces(response.body().getMessage());
                             }else {
                                 view.showError(response.body().getMessage());
                             }

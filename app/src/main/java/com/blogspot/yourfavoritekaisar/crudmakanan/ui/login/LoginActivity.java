@@ -37,7 +37,6 @@ public class LoginActivity extends AppCompatActivity  implements LoginContract.V
     private LoginPresenter presenter = new LoginPresenter(this);
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
