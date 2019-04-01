@@ -42,103 +42,97 @@ public class UploadMakananPresenter implements UploadMakananContract.Presenter {
             @Override
             public void onResponse(Call<MakananResponse> call, Response<MakananResponse> response) {
                 view.hideProgress();
-                if (response.body() != null) {
+                if (response.body() != null){
                     if (response.body().getResult() == 1) {
                         view.showSpinnerCategory(response.body().getMakananDataList());
-                    } else {
+                    }else {
                         view.showMessage(response.body().getMessage());
                     }
-                } else {
-                    view.showMessage("Data Kosong");
-
+                }else {
+                    view.showMessage("Data kosong");
                 }
             }
+
             @Override
             public void onFailure(Call<MakananResponse> call, Throwable t) {
                 view.hideProgress();
                 view.showMessage(t.getMessage());
-                Log.i("Cek Failure", "onFailure " + t.getMessage());
+            }
+        });
+
+    }
+
+    @Override
+    public void uploadImage(Context context,Uri filePath, String namaMakanan, String descMakanan, String idKategori) {
+        view.showProgress();
+
+        // Mencek foto, nameMakanan dan DescMakanan
+        if (namaMakanan.isEmpty()) {
+            view.showMessage("Nama makanan is empty");
+            view.hideProgress();
+            return;
+        }
+
+        if (descMakanan.isEmpty()){
+            view.showMessage("Desc makanan is empty");
+            view.hideProgress();
+            return;
+        }
+
+        if (filePath == null){
+            view.showMessage("Foto harus di isi");
+            view.hideProgress();
+            return;
+        }
+
+        // Mengambil alamat file image
+        File myFile = new File(filePath.getPath());
+        Uri selectedImage = getImageContentUri(context, myFile, filePath);
+        String partImage = getPath(context,selectedImage);
+        File imagefile = new File(partImage);
+
+        // Mengambil id user dari sharedpref
+        SharedPreferences pref = context.getSharedPreferences(Constants.pref_name,0);
+        String idUser = pref.getString(Constants.USER_ID,"");
+
+        // Mengambil tanggal sekarang dengan format default yyyy-MM-dd HH:mm:ss
+        String sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+
+        // Memasukkan data yang diperlukan ke dalam request body dengan tipe form-data untuk di kirim ke API
+        RequestBody reqBody = RequestBody.create(MediaType.parse("multipart/form-data"),imagefile);
+        MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("image", imagefile.getName(),reqBody);
+
+        RequestBody mNamaMakanan = RequestBody.create(MediaType.parse("multipart/form-data"),namaMakanan);
+        RequestBody mDescMakanan = RequestBody.create(MediaType.parse("multipart/form-data"),descMakanan);
+        RequestBody datetime = RequestBody.create(MediaType.parse("multipart/form-data"),sdf);
+
+        // Mengirim data ke API
+        Call<UploadMakananResponse> call = apiInterface.uploadMakanan(Integer.valueOf(idUser),Integer.valueOf(idKategori), mNamaMakanan,mDescMakanan,datetime,mPartImage);
+        call.enqueue(new Callback<UploadMakananResponse>() {
+            @Override
+            public void onResponse(Call<UploadMakananResponse> call, Response<UploadMakananResponse> response) {
+                view.hideProgress();
+                if(response.body().getResult() == 1)
+                {
+                    view.showMessage(response.body().getMessage());
+                    view.successUpload();
+                }else
+                {
+                    view.showMessage(response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UploadMakananResponse> call, Throwable t) {
+                view.hideProgress();
+                view.showMessage(t.getMessage());
+                Log.d("Gagal", "ON FAILURE : " + t.getMessage());
             }
         });
     }
 
-    @Override
-        public void uploadMakanan(Context context, Uri filePath, String namaMakanan, String descMakanan, String idCategory) {
-            view.showProgress();
-
-            if (namaMakanan.isEmpty()) {
-                view.showMessage("Nama Makanan Tidak Boleh Kosong");
-                view.hideProgress();
-                return;
-            }
-            if (descMakanan.isEmpty()) {
-                view.showMessage("Deskripsi Makanan Tidak Boleh Kosong");
-                view.hideProgress();
-                return;
-            }
-            if (filePath == null) {
-                view.showMessage("Silahkan Memilih Gambar");
-                view.hideProgress();
-                return;
-            }
-
-            // Menambil alamat file image
-            File myFile = new File(filePath.getPath());
-            Uri selectedImage = getImageContentUri(context, myFile, filePath);
-            String partImage = getPath(context, selectedImage);
-            File imageFile = new File(partImage);
-
-            // Mengambil id user dalam shared Pref
-            SharedPreferences pref = context.getSharedPreferences(Constants.pref_name, 0);
-            String idUser = pref.getString(Constants.USER_ID, "");
-
-            // Mengambil date sekarang untuk di uploud
-            String dateNow = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-            // Memasukkan data yang diperlukan ke dalam request body dengan tipe form data
-            // memasukkan imageFile ke dalam request body
-            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
-            MultipartBody.Part mPartImage = MultipartBody.Part.createFormData("image", imageFile.getName(), requestBody);
-
-            // Memasukkan nama desc dan insertTime
-            RequestBody mNamaMakanan = RequestBody.create(MediaType.parse("multipart/form-data"), namaMakanan);
-            RequestBody mDescMakanan = RequestBody.create(MediaType.parse("multipart/form-data"), descMakanan);
-            RequestBody mInsertTime = RequestBody.create(MediaType.parse("multipart/form-data"), dateNow);
-
-            //Mengirim data ke API
-            Call<UploadMakananResponse> call = apiInterface.uploadMakanan(
-                    Integer.valueOf(idUser),
-                    Integer.valueOf(idCategory),
-                    mNamaMakanan,
-                    mDescMakanan,
-                    mInsertTime,
-                    mPartImage);
-            call.enqueue(new Callback<UploadMakananResponse>() {
-                @Override
-                public void onResponse(Call<UploadMakananResponse> call, Response<UploadMakananResponse> response) {
-                    view.hideProgress();
-                    if (response.body() != null){
-                        if (response.body().getResult()== 1){
-                            view.showMessage(response.body().getMessage());
-                            view.successUpload();
-                        }else {
-                            view.showMessage(response.body().getMessage());
-                        }
-                    }else {
-                        view.showMessage("Data Kosong");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<UploadMakananResponse> call, Throwable t) {
-                    view.hideProgress();
-                    view.showMessage(t.getMessage());
-                    Log.i("Cek Failure", "onFailure" + t.getMessage());
-                }
-            });
-        }
-
-    private String getPath(Context context, Uri filepath) {
+    public String getPath(Context context, Uri filepath) {
         Cursor cursor = context.getContentResolver().query(filepath, null, null, null, null);
         cursor.moveToFirst();
         String document_id = cursor.getString(0);
@@ -156,7 +150,7 @@ public class UploadMakananPresenter implements UploadMakananContract.Presenter {
         return path;
     }
 
-    private Uri getImageContentUri(Context context, File imageFile, Uri filePath) {
+    public Uri getImageContentUri(Context context, File imageFile, Uri filePath) {
         String fileAbsolutePath = imageFile.getAbsolutePath();
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -165,8 +159,8 @@ public class UploadMakananPresenter implements UploadMakananContract.Presenter {
                 new String[]{fileAbsolutePath}, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-        // Apabila file gambar sudah pernah diapakai namun ada kondisi lain yang belum diketahui
-        // Apabila file gambar sudah pernah dipakai pengambilan bukan di galery
+            // Apabila file gambar sudah pernah diapakai namun ada kondisi lain yang belum diketahui
+            // Apabila file gambar sudah pernah dipakai pengambilan bukan di galery
 
             Log.i("Isi Selected if", "Masuk cursor ada");
             return filePath;
@@ -174,19 +168,18 @@ public class UploadMakananPresenter implements UploadMakananContract.Presenter {
         } else {
             Log.i("Isi Selected else", "cursor tidak ada");
             if (imageFile.exists()) {
-        // Apabila file gambar baru belum pernah di pakai
+                // Apabila file gambar baru belum pernah di pakai
                 Log.i("Isi Selected else", "imagefile exists");
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.DATA, fileAbsolutePath);
                 return context.getContentResolver().insert(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             } else {
-        // Apabila file gambar sudah pernah dipakai
-        // Apabila file gambar sudah pernah dipakai di galery
+                // Apabila file gambar sudah pernah dipakai
+                // Apabila file gambar sudah pernah dipakai di galery
                 Log.i("Isi Selected else", "imagefile tidak exists");
                 return filePath;
             }
         }
     }
-
 }

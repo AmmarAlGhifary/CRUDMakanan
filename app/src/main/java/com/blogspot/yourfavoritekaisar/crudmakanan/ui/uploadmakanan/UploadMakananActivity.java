@@ -62,66 +62,24 @@ public class UploadMakananActivity extends AppCompatActivity implements UploadMa
 
     // TODO 1 Menyiapkan variable yang dibutuhkan
 
+
+    private Uri filePath, selectedImage;
     private UploadMakananPresenter mUploadMakananPresenter = new UploadMakananPresenter(this);
     private String mIdCategory;
-    //private String part_image;
-
-    // Untuk Menampung lokasi gambar di dalam hp
-    private Uri filePath;
+    private String part_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_makanan);
         ButterKnife.bind(this);
-        PermissionGallery();
-        // Mengambil data category untuk di tampilkan di spinner
+        PermissionGalery();
         mUploadMakananPresenter.getCategory();
-        swipeRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                hideProgress();
-            }
-        });
-    }
-
-    private void PermissionGallery() {
-        // Mencek apakah user telah memberikan izin untuk mengakses external storage
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-            return;
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-        //If the user has denied the permission previously your code will come to this block
-        //Here you can explain why you need this permission
-        //Explain here why you need this permission
-                }
-        //And finally ask for the permission
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Constants.STORAGE_PERMISSION_CODE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
-        //If permission is granted
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        //Displaying a toast
-                showMessage("Permission granted now you can read the storage");
-                Log.i("Permission on", "onRequestPermissionsResult: " + String.valueOf(grantResults));
-            } else {
-        //Displaying another toast if permission is not granted
-                showMessage("Oops you just denied the permission");
-                Log.i("Permission off", "onRequestPermissionsResult: " + String.valueOf(grantResults));
-
-            }
-        }
     }
 
     @Override
     public void showProgress() {
         swipeRefresh.setRefreshing(true);
-
     }
 
     @Override
@@ -131,6 +89,7 @@ public class UploadMakananActivity extends AppCompatActivity implements UploadMa
 
     @Override
     public void showMessage(String msg) {
+
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -140,74 +99,100 @@ public class UploadMakananActivity extends AppCompatActivity implements UploadMa
     }
 
     @Override
-    public void showSpinnerCategory(final List<MakananData> categoryDataList) {
-        // Membuat data penampung untuk spinner
-        List<String> listSpinner = new ArrayList<>();
-        for (int i =0; i< categoryDataList.size(); i++){
+    public void showSpinnerCategory(List<MakananData> categoryDataList) {
+        List<String> listSpinner = new ArrayList<String>();
+        for (int i = 0; i < categoryDataList.size(); i++) {
             listSpinner.add(categoryDataList.get(i).getNamaKategori());
         }
 
-        // Membuat penampung spinner
-        ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listSpinner);
-        // KIta setting untuk menampilkan spinner
+        // Membuat adapter spinner
+        ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listSpinner);
+        // Menampilkan spinner 1 line
         categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        // Memasukkan adapter ke spinner
+        // Memasukkan adapter spinner ke dalam widget spinner kita
         spinCategory.setAdapter(categorySpinnerAdapter);
-        // memanggil spinner agar ada datanya
+
         spinCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Mengambil id category sesuai dengan pilihan user
                 mIdCategory = categoryDataList.get(position).getIdKategori();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
-
     }
 
     @OnClick({R.id.fab_choose_picture, R.id.btn_upload})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fab_choose_picture:
-                showFileChooser();
+                ShowFileChooser();
                 break;
             case R.id.btn_upload:
-                // Mengirimkan data untuk di upload ke presenter
-                mUploadMakananPresenter.uploadMakanan(this,filePath,
+                Log.d("Isi selected part", "selectedimage: " + part_image);
+                mUploadMakananPresenter.uploadImage(this,
+                        filePath,
                         edtName.getText().toString(),
                         edtDesc.getText().toString(),
-                        mIdCategory
-                );
+                        mIdCategory);
                 break;
         }
     }
 
-    private void showFileChooser() {
-        // Membuka media external storage
-        Intent intentGallery = new Intent(Intent.ACTION_PICK);
-        intentGallery.setType("image/*");
-        intentGallery.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intentGallery, "Choose a picture"), Constants.REQUEST_CODE);
+    private void ShowFileChooser() {
+        Intent intentgalery = new Intent(Intent.ACTION_PICK);
+        intentgalery.setType("image/*");
+        intentgalery.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intentgalery, "select Pictures"), 1);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Mencek apakah request code dan data ada
-        if (requestCode == Constants.REQUEST_CODE && requestCode == RESULT_OK && data != null && data.getData() != null){
-            // Mengambil Data image yang sudah diplih user
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             filePath = data.getData();
 
+            Log.d("Isi selected image", "selectedimage: " + String.valueOf(selectedImage));
+            Log.d("Isi filepath image", "getData file path: " + String.valueOf(filePath));
+
             try {
-                // Mengubah file bitmap
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 imgPicture.setImageBitmap(bitmap);
-                }catch (IOException e){
-                    e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void PermissionGalery() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            return;
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            //If the user has denied the permission previously your code will come to this block
+            //Here you can explain why you need this permission
+            //Explain here why you need this permission
+        }
+        //And finally ask for the permission
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Constants.STORAGE_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
+            //If permission is granted
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Displaying a toast
+                showMessage("Permission granted now you can read the storage");
+                Log.i("Permission on", "onRequestPermissionsResult: " + String.valueOf(grantResults));
+            } else {
+                //Displaying another toast if permission is not granted
+                showMessage("Oops you just denied the permission");
+                Log.i("Permission off", "onRequestPermissionsResult: " + String.valueOf(grantResults));
             }
         }
     }

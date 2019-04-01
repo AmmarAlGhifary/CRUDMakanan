@@ -20,6 +20,6 @@ public interface UploadMakananContract {
 
     interface Presenter{
         void getCategory();
-        void uploadMakanan (Context context, Uri filePath,String namaMakanan, String descMakanan, String idCategory);
+        void uploadImage (Context context, Uri filePath,String namaMakanan, String descMakanan, String idCategory);
     }
 }
