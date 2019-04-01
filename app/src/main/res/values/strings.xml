@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">CRUDMakanan</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_makanan">Makanan</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="title_profil">Profil</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="makanan">Makanan</string>
 </resources>

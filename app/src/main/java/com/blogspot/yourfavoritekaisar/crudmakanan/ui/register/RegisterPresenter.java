@@ -27,7 +27,6 @@ public class RegisterPresenter implements RegisterInterface.Presenter {
                     !loginData.getLevel().isEmpty() &&
                     !loginData.getNo_telp().isEmpty() &&
                     !loginData.getPassword().isEmpty() &&
-                    !loginData.getUsername().isEmpty() &&
                     !loginData.getNama_user().isEmpty()
                     ) {
 
