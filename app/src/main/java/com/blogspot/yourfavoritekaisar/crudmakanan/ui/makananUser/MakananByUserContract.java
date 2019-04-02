@@ -1,18 +1,19 @@
-package com.blogspot.yourfavoritekaisar.crudmakanan.ui.makananbycategory;
+package com.blogspot.yourfavoritekaisar.crudmakanan.ui.makananUser;
 
 import com.blogspot.yourfavoritekaisar.crudmakanan.model.makanan.MakananData;
 
 import java.util.List;
 
-public interface MakananByCategory {
+public interface MakananByUserContract {
     interface View{
         void showProgress();
         void hideProgress();
-        void showFoodByCategory(List<MakananData> foodNewsList);
+        void showFoodByUser(List<MakananData> foodByUserList);
         void showFailureMessage(String msg);
+
     }
 
     interface Presenter{
-        void getListFoodByCategory(String idCategory);
+        void getListFoodByUser(String idUser);
     }
 }

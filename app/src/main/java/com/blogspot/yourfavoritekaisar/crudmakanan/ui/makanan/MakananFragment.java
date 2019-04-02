@@ -103,8 +103,8 @@ public class MakananFragment extends Fragment implements MakananContract.View{
 
     @Override
     public void showFoodPopularList(List<MakananData> footPopularList) {
-        rvMakananNews.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvMakananNews.setAdapter(new MakananAdapter(MakananAdapter.TYPE_2, getContext(), footPopularList));
+        rvMakananPopuler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvMakananPopuler.setAdapter(new MakananAdapter(MakananAdapter.TYPE_2, getContext(), footPopularList));
 
     }
 

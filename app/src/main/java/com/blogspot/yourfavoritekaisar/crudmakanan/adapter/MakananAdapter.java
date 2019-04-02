@@ -2,7 +2,6 @@ package com.blogspot.yourfavoritekaisar.crudmakanan.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import com.blogspot.yourfavoritekaisar.crudmakanan.R;
 import com.blogspot.yourfavoritekaisar.crudmakanan.model.makanan.MakananData;
 import com.blogspot.yourfavoritekaisar.crudmakanan.ui.detailmakanan.DetailMakanan;
+import com.blogspot.yourfavoritekaisar.crudmakanan.ui.detailmakananbyuser.DetailMakananByUserActivity;
 import com.blogspot.yourfavoritekaisar.crudmakanan.ui.makananbycategory.MakananByCategoryActivity;
 import com.blogspot.yourfavoritekaisar.crudmakanan.utils.Constants;
 import com.bumptech.glide.Glide;
@@ -26,18 +26,22 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.blogspot.yourfavoritekaisar.crudmakanan.R.layout.item_food_category;
-import static com.blogspot.yourfavoritekaisar.crudmakanan.R.layout.item_food_popular;
-
 public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.ViewHolder> {
-    public static final int  TYPE_1 = 1;
+    // Type 1 untuk makanan baru
+    public static final int TYPE_1 = 1;
+    // Type 2 Untuk makanan populer
     public static final int TYPE_2 = 2;
+    // Type 3 untuk  category
     public static final int TYPE_3 = 3;
+    // Type 4 untuk makanan by category
     public static final int TYPE_4 = 4;
+    // Type 5 untuk data user
+    public static final int TYPE_5 = 5;
 
     Integer viewType;
     private final Context context;
     private final List<MakananData> makananDataList;
+
 
     public MakananAdapter(Integer viewType, Context context, List<MakananData> makananDataList) {
         this.viewType = viewType;
@@ -61,6 +65,9 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.ViewHold
             case TYPE_4:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_food_by_category, null);
                 return new FoodNewsViewHolder(view);
+            case TYPE_5:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_food_by_category, null);
+                return new FoodByUserViewHolder(view);
             default:
                 return null;
         }
@@ -153,6 +160,29 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.ViewHold
                     }
                 });
                 break;
+            case TYPE_5:
+                // Membuat holder untuk dapat mengakses widget
+                FoodByUserViewHolder foodByUserViewHolder = (FoodByUserViewHolder) holder;
+
+                // Requestoption untuk error dan placeholder gambar
+                RequestOptions options5 = new RequestOptions().error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_broken_image);
+                Glide.with(context).load(makananData.getUrlMakanan()).apply(options5).into(foodByUserViewHolder.imgMakanan);
+
+                // Menampilkan tittle dan jumlah view
+                foodByUserViewHolder.txtTitle.setText(makananData.getNamaMakanan());
+                foodByUserViewHolder.txtView.setText(makananData.getView());
+
+
+                foodByUserViewHolder.txtTime.setText(newDate(makananData.getInsertTime()));
+
+
+                // Membuat onclick
+                foodByUserViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        context.startActivity(new Intent(context, DetailMakananByUserActivity.class).putExtra(Constants.KEY_EXTRA_ID_MAKANAN, makananData.getIdMakanan()));
+                    }
+                });
         }
     }
 
@@ -236,5 +266,22 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.ViewHold
             newDate = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(date2);
         }
         return newDate;
+    }
+
+    public class FoodByUserViewHolder extends ViewHolder {
+        @BindView(R.id.img_makanan)
+        ImageView imgMakanan;
+        @BindView(R.id.txt_title)
+        TextView txtTitle;
+        @BindView(R.id.txt_time)
+        TextView txtTime;
+        @BindView(R.id.img_view)
+        ImageView imgView;
+        @BindView(R.id.txt_view)
+        TextView txtView;
+        public FoodByUserViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
     }
 }

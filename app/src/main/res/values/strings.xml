@@ -10,4 +10,5 @@
     <string name="gender_male">Male</string>
     <string name="gender_female">Female</string>
     <string name="makanan">Makanan</string>
+    <string name="kelola_makanan">Kelola Makanan</string>
 </resources>

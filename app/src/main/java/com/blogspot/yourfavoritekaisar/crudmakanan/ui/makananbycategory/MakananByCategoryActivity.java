@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.blogspot.yourfavoritekaisar.crudmakanan.R;
 import com.blogspot.yourfavoritekaisar.crudmakanan.adapter.MakananAdapter;
 import com.blogspot.yourfavoritekaisar.crudmakanan.model.makanan.MakananData;
+import com.blogspot.yourfavoritekaisar.crudmakanan.ui.makanan.MakananContract;
 import com.blogspot.yourfavoritekaisar.crudmakanan.utils.Constants;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MakananByCategoryActivity extends AppCompatActivity implements MakananByCategory.View {
+public class MakananByCategoryActivity extends AppCompatActivity implements MakananByCategoryContract.View {
 
     @BindView(R.id.pb_loading)
     ProgressBar pbLoading;
@@ -33,7 +34,7 @@ public class MakananByCategoryActivity extends AppCompatActivity implements Maka
     @BindView(R.id.sr_makanan)
     SwipeRefreshLayout srMakanan;
 
-    private MakananByCategoryPresenter mMakananByCategoryPresenter = new MakananByCategoryPresenter(this);
+    MakananByCategoryPresenter mMakananByCategoryPresenter = new MakananByCategoryPresenter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

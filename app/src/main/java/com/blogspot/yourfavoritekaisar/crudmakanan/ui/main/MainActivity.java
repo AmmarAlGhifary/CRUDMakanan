@@ -3,6 +3,7 @@ package com.blogspot.yourfavoritekaisar.crudmakanan.ui.main;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -10,7 +11,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.blogspot.yourfavoritekaisar.crudmakanan.R;
+import com.blogspot.yourfavoritekaisar.crudmakanan.ui.favorite.FavoriteFragment;
 import com.blogspot.yourfavoritekaisar.crudmakanan.ui.makanan.MakananFragment;
+import com.blogspot.yourfavoritekaisar.crudmakanan.ui.makananUser.MakananByUserFragment;
+import com.blogspot.yourfavoritekaisar.crudmakanan.ui.profil.ProfilFragment;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
 
@@ -25,19 +29,23 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_makanan:
-                    mTextMessage.setText(R.string.title_makanan);
-
+                    MakananFragment makananFragment = new MakananFragment();
+                    loadFragment(makananFragment);
                     return true;
-                case R.id.navigation_favorite:
-                    mTextMessage.setText(R.string.title_favorite);
+                case R.id.navigation_kelola_makanan:
+                    getSupportActionBar().setTitle("Kelola Makanan");
+                    MakananByUserFragment makananByUserFragment = new MakananByUserFragment();
+                    loadFragment(makananByUserFragment);
                     return true;
                 case R.id.navigation_profil:
-                    mTextMessage.setText(R.string.title_profil);
+                    ProfilFragment profilFragment = new ProfilFragment();
+                    loadFragment(profilFragment);
                     return true;
             }
             return false;
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +81,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
     }
 
-    private void loadFragment(MakananFragment makananFragment) {
+    private void loadFragment(Fragment fragment) {
+        // Menampilkan fragment menggunakan fragment transaction
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fl_container, makananFragment);
+        transaction.replace(R.id.fl_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
