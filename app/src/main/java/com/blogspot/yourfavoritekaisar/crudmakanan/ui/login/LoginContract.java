@@ -21,7 +21,5 @@ public interface LoginContract {
         void doLogin(String username, String password);
         void saveDataUser(Context context, LoginData loginData);
         void checkLogin(Context context);
-
-
     }
 }
