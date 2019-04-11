@@ -12,6 +12,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
@@ -86,4 +87,25 @@ public interface ApiInterface {
     // Mengambil data makanan berdasarkan usernya
     @GET("getmakananbyuser.php")
     Call<MakananResponse> getMakananByUser(@Query("iduser")int iduser);
+
+    // Menghapus Data makanan
+    @FormUrlEncoded
+    @POST("deletemakanan.php")
+    Call<MakananResponse> deleteMakanan(
+        @Field("idmakanan") int idMakanan,
+        @Field("fotomakanan") String namaFotoMakanan
+    );
+
+    // Mengupdate makanan
+    @Multipart
+    @POST("updatemakanan.php")
+    Call<MakananResponse> updateMakanan(
+            @Part("idmakanan") int idMakanan,
+            @Part("idkategori") int category,
+            @Part("namamakanan") RequestBody namaMakanan,
+            @Part("descnamakan") RequestBody descMakanan,
+            @Part("fotomakanan") RequestBody namaFotoMakanan,
+            @Part("inserttime") RequestBody insertTime,
+            @Part MultipartBody.Part image
+    );
 }

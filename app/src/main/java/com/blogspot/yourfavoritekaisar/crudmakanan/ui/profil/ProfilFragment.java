@@ -62,7 +62,7 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
     CardView layoutJenkel;
     Unbinder unbinder;
 
-    private ProfilPresenter profilPresenter = new ProfilPresenter(this);
+    private ProfilPresenter mProfilPresenter = new ProfilPresenter(this);
 
     private String idUser, namaUser, alamatUser, noTelp;
     private int gender;
@@ -87,7 +87,7 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
 
         setupSpinner();
 
-        profilPresenter.getDataUser(getContext());
+        mProfilPresenter.getDataUser(getContext());
 
         setHasOptionsMenu(true);
         return view;
@@ -95,8 +95,9 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
 
     private void setupSpinner() {
         // Membuat array spinner
-        ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(getContext(), R.array
-                .array_gender_options, android.R.layout.simple_spinner_item);
+        ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.array_gender_options,
+                android.R.layout.simple_spinner_item);
 
         // Menampilkan Spinner dalam satu line
         genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -140,6 +141,9 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
     @Override
     public void showSuccessUpdateUser(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        // Mengambil ulang data
+        mProfilPresenter.getDataUser(getContext());
+
     }
 
     @Override
@@ -191,7 +195,7 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
     @OnClick(R.id.btn_logout)
     public void onViewClicked() {
         // Melakukan perintah logout ke presenter
-        profilPresenter.logoutSession(getContext());
+        mProfilPresenter.logoutSession(getContext());
         // Menutup Activity
         getActivity().finish();
     }
@@ -245,7 +249,7 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
                        loginData.setJenkel(mGender);
 
                        // Mengirim data ke presenter untuk dimasukkan ke dalam databse
-                       profilPresenter.updateDataUser(getContext(), loginData);
+                       mProfilPresenter.updateDataUser(getContext(), loginData);
 
                        readMode();
                        action.findItem(R.id.menu_edit).setVisible(true);

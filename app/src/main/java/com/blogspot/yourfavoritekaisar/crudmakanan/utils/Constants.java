@@ -3,7 +3,9 @@ package com.blogspot.yourfavoritekaisar.crudmakanan.utils;
 import android.content.IntentSender;
 
 public class Constants {
-    public static final String BASE_URL = "http://192.168.71.109/makanan/";
+
+    // Base Url
+    public static final String BASE_URL = "http://192.168.71.73/makanan/";
     public static final String KEY_LOGIN = "A";
     public static final int STORAGE_PERMISSION_CODE = 1;
     public static final int REQUEST_CODE = 2 ;

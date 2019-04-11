@@ -32,7 +32,7 @@ public class MakananByUserPresenter implements MakananByUserContract.Presenter {
         call.enqueue(new Callback<MakananResponse>() {
             @Override
             public void onResponse(Call<MakananResponse> call, Response<MakananResponse> response) {
-                view.hideProgress();
+                 view.hideProgress();
                 if (response.body() != null){
                     if (response.body().getResult() == 1){
                         view.showFoodByUser(response.body().getMakananDataList());
